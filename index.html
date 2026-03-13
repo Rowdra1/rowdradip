@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Rowdra Dip Chackroborty — Urban Planner & GIS Specialist</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#eef7f1;
+  --glass:rgba(255,255,255,0.60);
+  --glass2:rgba(255,255,255,0.82);
+  --glass-border:rgba(34,139,74,0.15);
+  --glass-border2:rgba(34,139,74,0.26);
+  --accent:#1a7a42;
+  --accent2:#2db562;
+  --accent3:#0d5430;
+  --text:#0a2414;
+  --text2:#1a3d26;
+  --muted:rgba(10,36,20,0.54);
+  --muted2:rgba(10,36,20,0.35);
+  --font-display:'Playfair Display',serif;
+  --font-body:'Outfit',sans-serif;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-weight:400;overflow-x:hidden;min-height:100vh;}
+
+/* City bg */
+.city-bg{position:fixed;inset:0;z-index:-2;overflow:hidden;pointer-events:none;}
+.city-bg svg{position:absolute;bottom:0;left:0;width:100%;height:auto;opacity:0.07;}
+
+body::before{
+  content:'';position:fixed;inset:0;z-index:-1;
+  background:
+    radial-gradient(ellipse 70% 50% at 10% 15%,rgba(45,181,98,.22) 0%,transparent 55%),
+    radial-gradient(ellipse 50% 40% at 90% 75%,rgba(26,122,66,.16) 0%,transparent 50%),
+    radial-gradient(ellipse 60% 45% at 55% 40%,rgba(134,222,168,.12) 0%,transparent 55%);
+  animation:bgP 14s ease-in-out infinite alternate;
+}
+@keyframes bgP{0%{opacity:1;transform:scale(1);}100%{opacity:.75;transform:scale(1.04);}}
+
+/* NAV */
+nav{
+  position:fixed;top:1.25rem;left:50%;transform:translateX(-50%);z-index:200;
+  background:rgba(240,250,244,.85);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+  border:1px solid var(--glass-border2);border-radius:50px;
+  padding:.55rem 1.5rem;display:flex;gap:.1rem;align-items:center;white-space:nowrap;
+}
+nav a{color:var(--muted);text-decoration:none;font-size:.75rem;font-weight:500;letter-spacing:.03em;padding:.32rem .6rem;border-radius:20px;transition:all .2s;}
+nav a:hover{color:var(--accent);background:rgba(26,122,66,.08);}
+.nav-logo{font-family:var(--font-display);font-size:.88rem;font-weight:700;color:var(--accent3);margin-right:.4rem;padding-right:.7rem;border-right:1px solid var(--glass-border2);}
+
+/* Sections */
+section{padding:5.5rem 1.5rem;max-width:1000px;margin:0 auto;}
+
+/* HERO */
+#hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding-top:7rem;padding-bottom:3rem;position:relative;}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(26,122,66,.10);border:1px solid rgba(26,122,66,.22);border-radius:50px;padding:.35rem 1rem;font-size:.75rem;font-weight:500;letter-spacing:.08em;color:var(--accent);margin-bottom:1.5rem;animation:fadeUp .6s ease both;}
+.bdot{width:6px;height:6px;border-radius:50%;background:var(--accent2);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+.hero-name{font-family:var(--font-display);font-size:clamp(2.8rem,8vw,5.5rem);font-weight:900;line-height:1.0;letter-spacing:-.02em;color:var(--text);animation:fadeUp .6s .1s ease both;}
+.hero-name em{font-style:normal;color:var(--accent);}
+.hero-role{font-size:clamp(.9rem,2.5vw,1.15rem);font-weight:400;color:var(--muted);margin-top:.6rem;letter-spacing:.02em;animation:fadeUp .6s .2s ease both;}
+.hero-tagline{max-width:560px;font-size:.975rem;line-height:1.8;color:var(--muted);margin-top:1.2rem;animation:fadeUp .6s .3s ease both;}
+.hero-cta{display:flex;gap:.875rem;margin-top:2.2rem;flex-wrap:wrap;animation:fadeUp .6s .4s ease both;}
+.btn{text-decoration:none;padding:.7rem 1.6rem;border-radius:50px;font-size:.85rem;font-weight:500;transition:all .25s;cursor:pointer;border:none;font-family:var(--font-body);display:inline-block;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{background:var(--accent3);transform:translateY(-2px);box-shadow:0 8px 28px rgba(26,122,66,.30);}
+.btn-ghost{background:var(--glass);border:1px solid var(--glass-border2);color:var(--text);backdrop-filter:blur(8px);}
+.btn-ghost:hover{background:var(--glass2);transform:translateY(-2px);}
+.hero-stats{display:flex;gap:2rem;margin-top:2.4rem;flex-wrap:wrap;animation:fadeUp .6s .5s ease both;}
+.hstat{border-left:2px solid rgba(26,122,66,.25);padding-left:1rem;}
+.hstat-num{font-family:var(--font-display);font-size:1.55rem;font-weight:700;color:var(--accent);}
+.hstat-label{font-size:.73rem;color:var(--muted);margin-top:.1rem;}
+
+/* Section header */
+.sec-label{font-size:.72rem;letter-spacing:.15em;color:var(--accent);text-transform:uppercase;font-weight:600;margin-bottom:.5rem;}
+.sec-title{font-family:var(--font-display);font-size:clamp(1.7rem,4vw,2.6rem);font-weight:700;line-height:1.15;letter-spacing:-.01em;margin-bottom:.75rem;color:var(--text);}
+.sec-bar{width:40px;height:3px;border-radius:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));margin-bottom:2.25rem;}
+
+/* Glass card */
+.gc{background:var(--glass);border:1px solid var(--glass-border);border-radius:18px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);transition:all .3s;}
+.gc:hover{background:var(--glass2);box-shadow:0 14px 44px rgba(26,122,66,.09);}
+
+/* ABOUT */
+.about-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:2.5rem;align-items:start;}
+.about-body{font-size:.96rem;line-height:1.85;color:var(--muted);}
+.about-body p{margin-bottom:1rem;}
+.about-body strong{color:var(--text2);font-weight:600;}
+.about-info{display:flex;flex-direction:column;gap:.8rem;}
+.info-item{display:flex;align-items:center;gap:.75rem;padding:.72rem 1rem;border-radius:13px;background:rgba(255,255,255,.55);border:1px solid var(--glass-border);}
+.info-icon{width:32px;height:32px;border-radius:9px;background:rgba(26,122,66,.10);display:flex;align-items:center;justify-content:center;font-size:.88rem;flex-shrink:0;}
+.info-text{font-size:.82rem;color:var(--muted);}
+.info-text strong{display:block;color:var(--text2);font-size:.84rem;font-weight:600;}
+
+/* SKILLS */
+.skills-cols{display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start;}
+.sk-sub-title{font-family:var(--font-display);font-size:1.05rem;font-weight:700;color:var(--text2);margin-bottom:1.2rem;display:flex;align-items:center;gap:.5rem;}
+.sk-sub-title::before{content:'';display:block;width:11px;height:11px;border-radius:50%;background:var(--accent2);}
+.skgc{padding:1.2rem 1.4rem;margin-bottom:1rem;border-radius:15px;}
+.sk-group-label{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:.7rem;}
+.sk-tags{display:flex;flex-wrap:wrap;gap:.4rem;}
+.sk-tag{background:rgba(255,255,255,.7);border:1px solid var(--glass-border2);border-radius:50px;padding:.28rem .8rem;font-size:.77rem;color:var(--text2);font-weight:500;transition:all .2s;}
+.sk-tag:hover{background:rgba(26,122,66,.12);border-color:var(--accent);color:var(--accent3);}
+/* Software grid */
+.sw-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;}
+.sw-item{background:rgba(255,255,255,.65);border:1px solid var(--glass-border);border-radius:13px;padding:.9rem .65rem;text-align:center;transition:all .25s;}
+.sw-item:hover{background:var(--glass2);transform:translateY(-3px);box-shadow:0 8px 24px rgba(26,122,66,.12);}
+.sw-icon{font-size:1.55rem;margin-bottom:.4rem;display:block;}
+.sw-name{font-size:.7rem;font-weight:600;color:var(--text2);line-height:1.3;}
+.sw-cat{font-size:.63rem;color:var(--muted2);margin-top:.12rem;}
+
+/* PROJECTS */
+.proj-tabs{display:flex;gap:.5rem;margin-bottom:1.75rem;flex-wrap:wrap;}
+.proj-tab{padding:.42rem 1.05rem;border-radius:50px;font-size:.82rem;font-weight:500;cursor:pointer;border:1px solid var(--glass-border2);background:rgba(255,255,255,.5);color:var(--muted);transition:all .2s;}
+.proj-tab.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.proj-grid{display:none;}
+.proj-grid.active{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.2rem;}
+.proj-card{padding:1.4rem;border-radius:17px;display:flex;flex-direction:column;gap:.8rem;}
+.proj-icon{width:44px;height:44px;border-radius:12px;background:rgba(26,122,66,.10);display:flex;align-items:center;justify-content:center;font-size:1.35rem;border:1px solid var(--glass-border);}
+.proj-title{font-family:var(--font-display);font-size:.98rem;font-weight:700;color:var(--text);line-height:1.35;}
+.proj-desc{font-size:.81rem;line-height:1.7;color:var(--muted);flex:1;}
+.proj-tags{display:flex;flex-wrap:wrap;gap:.32rem;}
+.proj-tag{background:rgba(26,122,66,.09);border:1px solid rgba(26,122,66,.18);border-radius:50px;padding:.17rem .62rem;font-size:.69rem;color:var(--accent3);font-weight:500;}
+.proj-meta{font-size:.7rem;color:var(--muted2);}
+
+/* TIMELINE */
+.timeline{position:relative;padding-left:1.75rem;}
+.timeline::before{content:'';position:absolute;left:6px;top:8px;bottom:8px;width:1.5px;background:linear-gradient(180deg,var(--accent2),rgba(26,122,66,.15));}
+.tl-item{position:relative;margin-bottom:1.6rem;}
+.tl-item::before{content:'';position:absolute;left:-1.75rem;top:9px;width:12px;height:12px;border-radius:50%;background:var(--accent2);border:2px solid var(--bg);box-shadow:0 0 0 2px var(--accent);}
+.tl-card{padding:1.2rem 1.45rem;border-radius:15px;}
+.tl-period{font-size:.7rem;letter-spacing:.08em;color:var(--accent);font-weight:600;text-transform:uppercase;margin-bottom:.35rem;}
+.tl-title{font-family:var(--font-display);font-size:1.02rem;font-weight:700;color:var(--text);}
+.tl-sub{font-size:.83rem;color:var(--muted);margin-top:.2rem;}
+.tl-grade{display:inline-block;margin-top:.5rem;background:rgba(26,122,66,.10);border:1px solid rgba(26,122,66,.20);border-radius:50px;padding:.18rem .68rem;font-size:.7rem;font-weight:600;color:var(--accent3);}
+.tl-bullets{margin-top:.7rem;padding-left:0;display:flex;flex-direction:column;gap:.3rem;}
+.tl-bullets li{font-size:.81rem;color:var(--muted);line-height:1.6;list-style:none;padding-left:.75rem;position:relative;}
+.tl-bullets li::before{content:'▸';position:absolute;left:0;color:var(--accent2);font-size:.68rem;}
+
+/* EXPERIENCE */
+.exp-card{padding:1.7rem;border-radius:19px;margin-bottom:1.2rem;}
+.exp-header{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;}
+.exp-org{font-family:var(--font-display);font-size:1.08rem;font-weight:700;color:var(--text);}
+.exp-role{font-size:.88rem;color:var(--accent);font-weight:600;margin-top:.2rem;}
+.exp-period{font-size:.73rem;background:rgba(26,122,66,.09);border:1px solid rgba(26,122,66,.18);border-radius:50px;padding:.22rem .72rem;color:var(--accent3);font-weight:500;white-space:nowrap;align-self:flex-start;}
+.exp-bullets{display:flex;flex-direction:column;gap:.48rem;}
+.exp-bullet{display:flex;gap:.55rem;font-size:.84rem;color:var(--muted);line-height:1.65;}
+.exp-bullet::before{content:'◆';color:var(--accent2);font-size:.52rem;flex-shrink:0;margin-top:.36rem;}
+
+/* RESEARCH */
+.research-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;}
+.rc{padding:1.35rem;border-radius:15px;}
+.r-year{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:.45rem;}
+.r-title{font-size:.87rem;font-weight:600;color:var(--text);line-height:1.5;margin-bottom:.45rem;}
+.r-authors{font-size:.74rem;color:var(--muted2);line-height:1.5;margin-bottom:.45rem;}
+.r-pub{display:inline-flex;align-items:center;gap:.32rem;font-size:.7rem;background:rgba(26,122,66,.09);border:1px solid rgba(26,122,66,.18);border-radius:50px;padding:.17rem .62rem;color:var(--accent3);}
+.r-status{display:inline-flex;align-items:center;gap:.32rem;font-size:.7rem;background:rgba(245,180,30,.10);border:1px solid rgba(200,150,20,.25);border-radius:50px;padding:.17rem .62rem;color:#7a5c00;}
+.ip-grid{display:grid;grid-template-columns:1fr;gap:.8rem;margin-top:1.4rem;}
+.ip-item{padding:.95rem 1.2rem;border-radius:13px;display:flex;align-items:flex-start;gap:.7rem;}
+.ip-dot{width:8px;height:8px;border-radius:50%;background:var(--accent2);flex-shrink:0;margin-top:.36rem;}
+.ip-title{font-size:.84rem;color:var(--text2);font-weight:500;line-height:1.55;}
+
+/* NETWORKS */
+.net-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;}
+.nc{padding:1.3rem;border-radius:15px;}
+.net-period{font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:.38rem;}
+.net-role{font-size:.88rem;font-weight:700;color:var(--text);margin-bottom:.18rem;}
+.net-org{font-size:.78rem;color:var(--muted);margin-bottom:.6rem;}
+.net-bullets{display:flex;flex-direction:column;gap:.28rem;}
+.net-b{font-size:.77rem;color:var(--muted);padding-left:.8rem;position:relative;line-height:1.55;}
+.net-b::before{content:'•';position:absolute;left:0;color:var(--accent2);}
+.awards-grid{display:grid;grid-template-columns:1fr 1fr;gap:.95rem;margin-top:0;}
+.ac{padding:1.1rem 1.3rem;border-radius:13px;display:flex;align-items:flex-start;gap:.8rem;}
+.aw-icon{font-size:1.35rem;flex-shrink:0;}
+.aw-title{font-size:.85rem;font-weight:600;color:var(--text);margin-bottom:.18rem;}
+.aw-inst{font-size:.73rem;color:var(--muted);}
+.aw-year{font-size:.67rem;color:var(--accent);font-weight:600;}
+
+/* CONTACT */
+.contact-wrap{display:grid;grid-template-columns:1fr 1.3fr;gap:3rem;align-items:start;}
+.contact-channels{display:flex;flex-direction:column;gap:.9rem;}
+.cch{display:flex;align-items:center;gap:1rem;padding:.95rem 1.2rem;border-radius:15px;text-decoration:none;transition:all .25s;}
+.cch:hover{transform:translateX(4px);background:var(--glass2);}
+.ch-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;border:1px solid var(--glass-border);}
+.ch-label{font-size:.72rem;color:var(--muted2);font-weight:500;letter-spacing:.05em;text-transform:uppercase;}
+.ch-value{font-size:.88rem;font-weight:600;color:var(--text);margin-top:.08rem;}
+.cfwrap{background:var(--glass);border:1px solid var(--glass-border);border-radius:21px;padding:1.85rem;backdrop-filter:blur(16px);}
+.fg{display:flex;flex-direction:column;gap:.38rem;margin-bottom:.9rem;}
+.fg label{font-size:.7rem;color:var(--muted);letter-spacing:.07em;font-weight:600;text-transform:uppercase;}
+.fg input,.fg textarea{background:rgba(255,255,255,.65);border:1px solid var(--glass-border2);border-radius:10px;padding:.68rem 1rem;color:var(--text);font-family:var(--font-body);font-size:.87rem;outline:none;transition:border .2s;resize:vertical;}
+.fg input:focus,.fg textarea:focus{border-color:var(--accent);background:rgba(255,255,255,.88);}
+.fg input::placeholder,.fg textarea::placeholder{color:var(--muted2);}
+.form-success{display:none;text-align:center;padding:.7rem;color:var(--accent);font-size:.87rem;font-weight:500;}
+
+/* FOOTER */
+footer{text-align:center;padding:2.5rem 1.5rem;border-top:1px solid rgba(26,122,66,.15);color:var(--muted);font-size:.8rem;}
+footer strong{color:var(--accent3);font-weight:600;}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);}}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .65s ease,transform .65s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+/* RESPONSIVE */
+@media(max-width:720px){
+  nav{padding:.5rem 1rem;}nav a{font-size:.68rem;padding:.28rem .48rem;}
+  .about-grid,.skills-cols,.research-grid,.net-grid,.awards-grid,.contact-wrap{grid-template-columns:1fr;}
+  .sw-grid{grid-template-columns:repeat(3,1fr);}
+  .hero-stats{gap:1.2rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- City skyline BG -->
+<div class="city-bg">
+<svg viewBox="0 0 1440 340" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax slice">
+<defs>
+  <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+    <path d="M50 0L0 0 0 50" fill="none" stroke="#1a7a42" stroke-width="0.6" opacity="0.5"/>
+  </pattern>
+</defs>
+<rect width="1440" height="220" fill="url(#grid)" opacity="0.35"/>
+<g fill="#1a7a42">
+  <!-- Buildings left -->
+  <rect x="0" y="230" width="42" height="110"/><rect x="16" y="200" width="10" height="30"/>
+  <rect x="44" y="210" width="58" height="130"/><rect x="57" y="178" width="13" height="32"/>
+  <rect x="60" y="160" width="5" height="18"/>
+  <rect x="104" y="185" width="38" height="155"/><rect x="113" y="158" width="10" height="27"/>
+  <rect x="144" y="215" width="48" height="125"/>
+  <rect x="194" y="162" width="64" height="178"/><rect x="210" y="130" width="16" height="32"/>
+  <rect x="214" y="108" width="6" height="22"/>
+  <!-- window dots -->
+  <rect x="200" y="170" width="4" height="4" opacity=".6"/><rect x="210" y="170" width="4" height="4" opacity=".6"/>
+  <rect x="220" y="170" width="4" height="4" opacity=".6"/><rect x="200" y="180" width="4" height="4" opacity=".6"/>
+  <rect x="210" y="180" width="4" height="4" opacity=".6"/><rect x="220" y="180" width="4" height="4" opacity=".6"/>
+  <rect x="200" y="190" width="4" height="4" opacity=".6"/><rect x="210" y="190" width="4" height="4" opacity=".6"/>
+  <rect x="260" y="198" width="32" height="142"/>
+  <rect x="294" y="178" width="54" height="162"/><rect x="308" y="148" width="13" height="30"/>
+  <!-- Buildings centre -->
+  <rect x="350" y="218" width="42" height="122"/>
+  <rect x="394" y="148" width="74" height="192"/><rect x="410" y="116" width="18" height="32"/>
+  <rect x="416" y="94" width="8" height="22"/>
+  <rect x="400" y="160" width="5" height="5" opacity=".6"/><rect x="412" y="160" width="5" height="5" opacity=".6"/>
+  <rect x="424" y="160" width="5" height="5" opacity=".6"/><rect x="436" y="160" width="5" height="5" opacity=".6"/>
+  <rect x="400" y="172" width="5" height="5" opacity=".6"/><rect x="412" y="172" width="5" height="5" opacity=".6"/>
+  <rect x="424" y="172" width="5" height="5" opacity=".6"/><rect x="436" y="172" width="5" height="5" opacity=".6"/>
+  <rect x="470" y="188" width="48" height="152"/>
+  <rect x="520" y="168" width="58" height="172"/><rect x="538" y="138" width="14" height="30"/>
+  <rect x="580" y="202" width="36" height="138"/>
+  <rect x="618" y="170" width="62" height="170"/><rect x="634" y="138" width="16" height="32"/>
+  <rect x="638" y="118" width="6" height="20"/>
+  <rect x="682" y="198" width="42" height="142"/>
+  <rect x="726" y="162" width="58" height="178"/><rect x="742" y="128" width="15" height="34"/>
+  <rect x="736" y="170" width="5" height="5" opacity=".6"/><rect x="748" y="170" width="5" height="5" opacity=".6"/>
+  <rect x="760" y="170" width="5" height="5" opacity=".6"/>
+  <!-- Buildings right -->
+  <rect x="786" y="208" width="48" height="132"/>
+  <rect x="836" y="178" width="68" height="162"/><rect x="852" y="144" width="16" height="34"/>
+  <rect x="858" y="122" width="6" height="22"/>
+  <rect x="842" y="188" width="5" height="5" opacity=".6"/><rect x="854" y="188" width="5" height="5" opacity=".6"/>
+  <rect x="866" y="188" width="5" height="5" opacity=".6"/>
+  <rect x="906" y="192" width="42" height="148"/>
+  <rect x="950" y="168" width="56" height="172"/><rect x="966" y="135" width="14" height="33"/>
+  <rect x="1008" y="218" width="38" height="122"/>
+  <rect x="1048" y="165" width="62" height="175"/><rect x="1064" y="132" width="17" height="33"/>
+  <rect x="1068" y="110" width="7" height="22"/>
+  <rect x="1054" y="175" width="5" height="5" opacity=".6"/><rect x="1066" y="175" width="5" height="5" opacity=".6"/>
+  <rect x="1078" y="175" width="5" height="5" opacity=".6"/><rect x="1090" y="175" width="5" height="5" opacity=".6"/>
+  <rect x="1112" y="200" width="44" height="140"/>
+  <rect x="1158" y="172" width="58" height="168"/><rect x="1174" y="138" width="15" height="34"/>
+  <rect x="1218" y="188" width="46" height="152"/>
+  <rect x="1266" y="162" width="56" height="178"/><rect x="1282" y="128" width="14" height="34"/>
+  <rect x="1324" y="205" width="42" height="135"/>
+  <rect x="1368" y="172" width="72" height="168"/>
+  <!-- Road -->
+  <rect x="0" y="335" width="1440" height="5"/>
+  <rect x="0" y="328" width="1440" height="2" opacity=".4"/>
+  <!-- Road dashes -->
+  <rect x="100" y="331" width="60" height="2" opacity=".3"/>
+  <rect x="240" y="331" width="60" height="2" opacity=".3"/>
+  <rect x="380" y="331" width="60" height="2" opacity=".3"/>
+  <rect x="520" y="331" width="60" height="2" opacity=".3"/>
+  <rect x="660" y="331" width="60" height="2" opacity=".3"/>
+  <rect x="800" y="331" width="60" height="2" opacity=".3"/>
+  <rect x="940" y="331" width="60" height="2" opacity=".3"/>
+  <rect x="1080" y="331" width="60" height="2" opacity=".3"/>
+  <rect x="1220" y="331" width="60" height="2" opacity=".3"/>
+</g>
+</svg>
+</div>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-logo">RDC</span>
+  <a href="#about">About</a>
+  <a href="#skills">Skills</a>
+  <a href="#projects">Projects</a>
+  <a href="#education">Education</a>
+  <a href="#experience">Experience</a>
+  <a href="#research">Research</a>
+  <a href="#networks">Networks</a>
+  <a href="#contact">Contact</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-badge"><span class="bdot"></span> Open to Opportunities · Dhaka, Bangladesh</div>
+  <h1 class="hero-name">Rowdra Dip<br><em>Chackroborty</em></h1>
+  <p class="hero-role">Urban & Regional Planner · GIS Specialist · Environmental Researcher</p>
+  <p class="hero-tagline">Specializing in geospatial analysis, sustainable urban development, and water resource management — building resilient communities through evidence-based planning and spatial intelligence.</p>
+  <div class="hero-cta">
+    <a href="#projects" class="btn btn-primary">Explore My Work</a>
+    <a href="#research" class="btn btn-ghost">View Research</a>
+    <a href="#contact" class="btn btn-ghost">Contact Me</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hstat"><div class="hstat-num">4+</div><div class="hstat-label">Publications</div></div>
+    <div class="hstat"><div class="hstat-num">5</div><div class="hstat-label">Research In Progress</div></div>
+    <div class="hstat"><div class="hstat-num">3.70</div><div class="hstat-label">CGPA / 4.00</div></div>
+    <div class="hstat"><div class="hstat-num">4</div><div class="hstat-label">Awards</div></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+<div class="reveal">
+  <p class="sec-label">01 — About Me</p>
+  <h2 class="sec-title">Who I Am</h2>
+  <div class="sec-bar"></div>
+  <div class="about-grid">
+    <div class="about-body">
+      <p>I am <strong>Rowdra Dip Chackroborty</strong>, an Urban & Regional Planning graduate from <strong>Rajshahi University of Engineering & Technology (RUET)</strong>, currently working as an <strong>Assistant Urban Planner at Sheltech Consultants Pvt. Ltd.</strong>, Dhaka.</p>
+      <p>My expertise lies at the intersection of <strong>GIS & remote sensing</strong>, sustainable urban development, and environmental planning — with a strong focus on <strong>water resource management, flood risk assessment</strong>, and climate-resilient community planning.</p>
+      <p>As a researcher, I have co-authored publications in <strong>Springer Nature</strong> and international conferences, and currently have 5 research papers under review or in progress. I am passionate about translating spatial data into actionable planning decisions for a sustainable future.</p>
+      <p>Languages: <strong>Bengali</strong> (native) · <strong>English</strong> (C1/C2 — Proficient)</p>
+    </div>
+    <div class="about-info">
+      <div class="info-item"><div class="info-icon">🏢</div><div class="info-text"><strong>Current Position</strong>Assistant Urban Planner, Sheltech Consultants Pvt. Ltd.</div></div>
+      <div class="info-item"><div class="info-icon">🎓</div><div class="info-text"><strong>Education</strong>B.URP, RUET · CGPA 3.70 / 4.00</div></div>
+      <div class="info-item"><div class="info-icon">📍</div><div class="info-text"><strong>Location</strong>Dhaka, Bangladesh</div></div>
+      <div class="info-item"><div class="info-icon">🗺️</div><div class="info-text"><strong>Specialization</strong>GIS · Remote Sensing · Spatial Planning</div></div>
+      <div class="info-item"><div class="info-icon">🎯</div><div class="info-text"><strong>Interests</strong>Football · Gaming · Travelling · Social Work</div></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+<div class="reveal">
+  <p class="sec-label">02 — Skills</p>
+  <h2 class="sec-title">Expertise & Tools</h2>
+  <div class="sec-bar"></div>
+  <div class="skills-cols">
+    <!-- Technical -->
+    <div>
+      <div class="sk-sub-title">Technical Skills</div>
+      <div class="gc skgc"><div class="sk-group-label">GIS & Spatial Analysis</div><div class="sk-tags"><span class="sk-tag">Geographic Information Systems</span><span class="sk-tag">Remote Sensing</span><span class="sk-tag">Spatial Modelling</span><span class="sk-tag">Geospatial Analysis</span><span class="sk-tag">Geodata Processing</span><span class="sk-tag">InVEST Model</span></div></div>
+      <div class="gc skgc"><div class="sk-group-label">Urban & Environmental Planning</div><div class="sk-tags"><span class="sk-tag">Urban Planning</span><span class="sk-tag">Spatial Planning</span><span class="sk-tag">Master Plan Preparation</span><span class="sk-tag">Urban Sustainability</span><span class="sk-tag">Disaster Management</span><span class="sk-tag">Climate Adaptation</span><span class="sk-tag">Coastal Planning</span></div></div>
+      <div class="gc skgc"><div class="sk-group-label">Research & Field Methods</div><div class="sk-tags"><span class="sk-tag">SCS-CN Hydrological Modelling</span><span class="sk-tag">AHP Analysis</span><span class="sk-tag">Flood Risk Assessment</span><span class="sk-tag">PRA / KII Surveys</span><span class="sk-tag">Site Suitability Analysis</span><span class="sk-tag">Rainwater Harvesting</span></div></div>
+      <div class="gc skgc"><div class="sk-group-label">Analytical & Programming</div><div class="sk-tags"><span class="sk-tag">Python (Geodata)</span><span class="sk-tag">Machine Learning (Urban)</span><span class="sk-tag">Water Resource Management</span><span class="sk-tag">Academic Research & Publishing</span></div></div>
+    </div>
+    <!-- Software -->
+    <div>
+      <div class="sk-sub-title">Software Skills</div>
+      <div class="sw-grid">
+        <div class="sw-item"><span class="sw-icon">🗺️</span><div class="sw-name">ArcGIS / ArcGIS Pro</div><div class="sw-cat">GIS Platform</div></div>
+        <div class="sw-item"><span class="sw-icon">🌍</span><div class="sw-name">Google Earth Engine</div><div class="sw-cat">Remote Sensing</div></div>
+        <div class="sw-item"><span class="sw-icon">🌐</span><div class="sw-name">Google Earth Pro</div><div class="sw-cat">Satellite Imagery</div></div>
+        <div class="sw-item"><span class="sw-icon">🐍</span><div class="sw-name">Python / Jupyter / Colab</div><div class="sw-cat">Data Science</div></div>
+        <div class="sw-item"><span class="sw-icon">📊</span><div class="sw-name">Microsoft Office</div><div class="sw-cat">Productivity</div></div>
+        <div class="sw-item"><span class="sw-icon">📐</span><div class="sw-name">AutoCAD</div><div class="sw-cat">Design & Drafting</div></div>
+        <div class="sw-item"><span class="sw-icon">🏗️</span><div class="sw-name">ArchiCAD</div><div class="sw-cat">Architecture</div></div>
+        <div class="sw-item"><span class="sw-icon">📦</span><div class="sw-name">SketchUp</div><div class="sw-cat">3D Modelling</div></div>
+        <div class="sw-item"><span class="sw-icon">✨</span><div class="sw-name">Lumion</div><div class="sw-cat">3D Rendering</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+<div class="reveal">
+  <p class="sec-label">03 — Projects</p>
+  <h2 class="sec-title">Selected Works</h2>
+  <div class="sec-bar"></div>
+  <div class="proj-tabs">
+    <div class="proj-tab active" onclick="switchTab('academic',this)">Academic Projects</div>
+    <div class="proj-tab" onclick="switchTab('professional',this)">Professional Projects</div>
+  </div>
+  <!-- Academic -->
+  <div class="proj-grid active" id="academic">
+    <div class="gc proj-card"><div class="proj-icon">💧</div><div class="proj-title">Water Resource Management — Koyra Upazila, Khulna</div><div class="proj-desc">Developed an integrated strategic plan for flood-susceptible coastal areas using SCS-CN hydrological modelling, AHP-based flood risk assessment, and rainwater harvesting strategies for resilient urban planning. Bachelor thesis with CGPA 3.70.</div><div class="proj-tags"><span class="proj-tag">GIS</span><span class="proj-tag">SCS-CN</span><span class="proj-tag">AHP</span><span class="proj-tag">Flood Risk</span><span class="proj-tag">Remote Sensing</span></div><div class="proj-meta">📅 2019–2024 · Bachelor Thesis · RUET</div></div>
+    <div class="gc proj-card"><div class="proj-icon">🏔️</div><div class="proj-title">Landslide Susceptibility — Hilly Bangladesh</div><div class="proj-desc">Geostatistical and geospatial modelling approach for landslide susceptibility and risk assessment in hilly regions of Bangladesh — published in Springer Nature's Advances in Natural and Technological Hazards Research.</div><div class="proj-tags"><span class="proj-tag">Landslide Modelling</span><span class="proj-tag">Geostatistics</span><span class="proj-tag">Risk Assessment</span><span class="proj-tag">Springer Nature</span></div><div class="proj-meta">📅 2024 · Springer Nature Publication</div></div>
+    <div class="gc proj-card"><div class="proj-icon">🏘️</div><div class="proj-title">Land Use Change — River Alteration, Rajshahi</div><div class="proj-desc">Assessed land use change and economic transition under the impacts of river course alteration in rural areas using a PRA framework-based spatial analysis. Presented at ICPACE 2023 at RUET.</div><div class="proj-tags"><span class="proj-tag">Land Use</span><span class="proj-tag">PRA Framework</span><span class="proj-tag">Rural Planning</span><span class="proj-tag">GIS</span></div><div class="proj-meta">📅 2023 · ICPACE Conference · RUET</div></div>
+    <div class="gc proj-card"><div class="proj-icon">🌾</div><div class="proj-title">Digital Transformation in Agriculture — Rajshahi</div><div class="proj-desc">Analytical study on modernizing the agricultural framework through ICT implementation in rural Rajshahi — bridging technology gaps in farming communities through evidence-based geospatial planning.</div><div class="proj-tags"><span class="proj-tag">ICT</span><span class="proj-tag">Agriculture</span><span class="proj-tag">Rural Development</span><span class="proj-tag">Spatial Analysis</span></div><div class="proj-meta">📅 2023 · ICPACE Conference · RUET</div></div>
+  </div>
+  <!-- Professional -->
+  <div class="proj-grid" id="professional">
+    <div class="gc proj-card"><div class="proj-icon">🗺️</div><div class="proj-title">Fakirhat Upazila Master Plan — GIS Database</div><div class="proj-desc">Led a team of 10 GIS analysts to prepare a comprehensive GIS database for the Fakirhat Upazila Master Plan under UTMIDP. Delivered 2 months ahead of the assigned deadline through streamlined coordination and workflow management.</div><div class="proj-tags"><span class="proj-tag">ArcGIS</span><span class="proj-tag">Master Plan</span><span class="proj-tag">UTMIDP</span><span class="proj-tag">Team Lead</span></div><div class="proj-meta">📅 2024–Present · Sheltech Consultants · Bagerhat</div></div>
+    <div class="gc proj-card"><div class="proj-icon">🏙️</div><div class="proj-title">Field Survey & Planning Analysis — Fakirhat</div><div class="proj-desc">As Community Mobilization Officer, conducted infrastructure, socioeconomic, and transportation field surveys (PRA, KII). Acted as In-Charge for database finalization, survey analysis, and planning report writing.</div><div class="proj-tags"><span class="proj-tag">Field Survey</span><span class="proj-tag">PRA</span><span class="proj-tag">KII</span><span class="proj-tag">Planning Report</span><span class="proj-tag">GIS Mapping</span></div><div class="proj-meta">📅 2024–Present · Sheltech Consultants · Dhaka</div></div>
+    <div class="gc proj-card"><div class="proj-icon">📈</div><div class="proj-title">Economic Extension — Southern Bangladesh</div><div class="proj-desc">Comparative analysis of the economic extension of Southern Bangladesh through short-run and long-run approaches. Published in the Journal of South Asian Exchanges (Pine Press, Vol. 1 Issue 1).</div><div class="proj-tags"><span class="proj-tag">Economic Analysis</span><span class="proj-tag">Southern Bangladesh</span><span class="proj-tag">Published Research</span></div><div class="proj-meta">📅 2024 · Journal of South Asian Exchanges</div></div>
+  </div>
+</div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+<div class="reveal">
+  <p class="sec-label">04 — Education</p>
+  <h2 class="sec-title">Academic Background</h2>
+  <div class="sec-bar"></div>
+  <div class="timeline">
+    <div class="tl-item"><div class="gc tl-card">
+      <div class="tl-period">02/2019 – 04/2024</div>
+      <div class="tl-title">Bachelor of Urban & Regional Planning (B.URP)</div>
+      <div class="tl-sub">Rajshahi University of Engineering & Technology (RUET), Rajshahi, Bangladesh</div>
+      <span class="tl-grade">CGPA: 3.70 / 4.00</span>
+      <ul class="tl-bullets">
+        <li>Thesis: Developing an Integrated Strategic Plan for Water Resource Management at Flood-Susceptible Areas of Koyra Upazila, Khulna</li>
+        <li>Geospatial & remote sensing analysis using SCS-CN method for hydrological & environmental modelling and flood prediction</li>
+        <li>AHP, locally led adaptation & participatory approaches for flood risk assessment & site suitability analysis</li>
+        <li>Sustainable water resource management through rainwater harvesting strategies for resilient urban planning</li>
+      </ul>
+    </div></div>
+    <div class="tl-item"><div class="gc tl-card">
+      <div class="tl-period">07/2016 – 07/2018</div>
+      <div class="tl-title">Higher Secondary School Certificate (HSC)</div>
+      <div class="tl-sub">Dhaka Residential Model College, Dhaka, Bangladesh</div>
+      <span class="tl-grade">GPA: 5.00 / 5.00</span>
+    </div></div>
+    <div class="tl-item"><div class="gc tl-card">
+      <div class="tl-period">01/2015 – 05/2016</div>
+      <div class="tl-title">Secondary School Certificate (SSC)</div>
+      <div class="tl-sub">Lohagara Govt. Pilot High School, Narail, Bangladesh</div>
+      <span class="tl-grade">GPA: 5.00 / 5.00</span>
+    </div></div>
+  </div>
+</div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+<div class="reveal">
+  <p class="sec-label">05 — Professional Engagement</p>
+  <h2 class="sec-title">Work Experience</h2>
+  <div class="sec-bar"></div>
+  <div class="gc exp-card">
+    <div class="exp-header">
+      <div>
+        <div class="exp-org">Sheltech Consultants Pvt. Ltd.</div>
+        <div class="exp-role">Assistant Urban Planner</div>
+        <div style="font-size:.77rem;color:var(--muted);margin-top:.2rem;">Sheltech Tower, West Panthapath, Dhaka 1205, Bangladesh · Full-time</div>
+      </div>
+      <div class="exp-period">01 Mar 2024 – Present</div>
+    </div>
+    <div class="exp-bullets">
+      <div class="exp-bullet">Led a team of <strong style="color:var(--text2)">10 GIS analysts</strong> responsible for preparing the GIS database for the upazila master plan, delivering <strong style="color:var(--text2)">2 months ahead</strong> of the assigned deadline.</div>
+      <div class="exp-bullet">Maintained effective coordination with consultants and clients throughout database presentation and plan development, ensuring full project coherence across all deliverables.</div>
+      <div class="exp-bullet">As <strong style="color:var(--text2)">Community Mobilization Officer</strong>, conducted field-based surveys (infrastructure, socioeconomic, transportation), PRA, and KII in UTMIDP / Fakirhat Upazila Master Plan Preparation Project.</div>
+      <div class="exp-bullet">During the deliverable phase, acted as <strong style="color:var(--text2)">In-Charge</strong> of finalizing the database, survey analysis, planning report writing, and analysis maps for Fakirhat Upazila, Bagerhat.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- RESEARCH -->
+<section id="research">
+<div class="reveal">
+  <p class="sec-label">06 — Research</p>
+  <h2 class="sec-title">Publications & Research</h2>
+  <div class="sec-bar"></div>
+
+  <div class="sk-sub-title" style="margin-bottom:1.2rem;">Published Works</div>
+  <div class="research-grid">
+    <div class="gc rc"><div class="r-year">2024 · Springer Nature</div><div class="r-title">Landslide Susceptibility and Risk Assessment in Hilly Regions of Bangladesh: A Geostatistical and Geospatial Modeling Approach for Sustainability</div><div class="r-authors">Md. Toufiq Hossain, Rowdra Dip Chackroborty, Labib Intisar, Sazzad Al Toufiq Shuvo, Abdullah Al Rakib, & Abdullah Al Kafy</div><span class="r-pub">📖 Advances in Natural & Technological Hazards Research · pp. 593–619</span></div>
+    <div class="gc rc"><div class="r-year">2024 · Pine Press</div><div class="r-title">Assessment of Economic Extension of The Southern Region, Bangladesh: A Comparative Analysis Through Short Run and Long Run Approach</div><div class="r-authors">Rowdra Dip Chackroborty, Shams Nur Islam Badhon, Anutosh Das, & Sumita Roy</div><span class="r-pub">📖 Journal of South Asian Exchanges · Vol. 1 Issue 1</span></div>
+    <div class="gc rc"><div class="r-year">2023 · ICPACE · RUET</div><div class="r-title">Assessment of Land Use Change and Economic Transition Under the Impacts of River Course Alteration in Rural Areas, Rajshahi: A PRA Framework-based Analysis</div><div class="r-authors">Rowdra Dip Chackroborty, Md. Shaikur Rahman Sun, Bipasa Akter, Abir Ornob, Md. Abdul Wakil, & Anutosh Das</div><span class="r-pub">📖 International Conference on Planning, Architecture & Civil Engineering</span></div>
+    <div class="gc rc"><div class="r-year">2023 · ICPACE · RUET</div><div class="r-title">An Analytical Approach for Digital Transformation & Modernizing Agricultural Framework through ICT in Rural Areas, Rajshahi</div><div class="r-authors">Rowdra Dip Chackroborty, Mehedi Hasan, Md. Atik Shahriar, Rownik Jahan, Md. Abdul Wakil, & Dulal Sarkar</div><span class="r-pub">📖 International Conference on Planning, Architecture & Civil Engineering</span></div>
+  </div>
+
+  <div class="sk-sub-title" style="margin-top:2.5rem;margin-bottom:1rem;">Research in Progress & Review</div>
+  <div class="ip-grid">
+    <div class="gc ip-item"><div class="ip-dot"></div><div><div class="ip-title">Integrating Comparative Analysis of Geospatial Modelling Approach for Flood Susceptibility Analysis at the Coastal Koyra, Bangladesh</div><span class="r-status" style="margin-top:.4rem;display:inline-flex;">🔄 In Review · Since 07/2025</span></div></div>
+    <div class="gc ip-item"><div class="ip-dot"></div><div><div class="ip-title">A Geospatial Analysis for Thriving Agricultural Sector at Koyra Upazila, Khulna by Identifying Suitable Rainwater Harvesting Structure Site Integrating SCS-CN</div><span class="r-status" style="margin-top:.4rem;display:inline-flex;">🔄 In Review · Since 06/2025</span></div></div>
+    <div class="gc ip-item"><div class="ip-dot"></div><div><div class="ip-title">Shoreline Dynamics and Coastal Vulnerability Assessment in Bangladesh: An Integrated Approach Using Remote Sensing and the InVEST Model</div><span class="r-status" style="margin-top:.4rem;display:inline-flex;">✅ Peer Reviewed · Since 03/2025</span></div></div>
+    <div class="gc ip-item"><div class="ip-dot"></div><div><div class="ip-title">Spatiotemporal Land Use Changes Shaping Biodiversity Dynamics in Southeastern Regions of Bangladesh: A Multi-Scale Geospatial Modelling Approach and Ecological Analysis</div><span class="r-status" style="margin-top:.4rem;display:inline-flex;">⚙️ In Progress · Since 05/2025</span></div></div>
+    <div class="gc ip-item"><div class="ip-dot"></div><div><div class="ip-title">Exploring the Influence of Potential Factors on Urban Change of Bangladesh by Machine Learning Approach</div><span class="r-status" style="margin-top:.4rem;display:inline-flex;">⚙️ In Progress · Since 08/2025</span></div></div>
+  </div>
+</div>
+</section>
+
+<!-- NETWORKS -->
+<section id="networks">
+<div class="reveal">
+  <p class="sec-label">07 — Networks, Memberships & Awards</p>
+  <h2 class="sec-title">Affiliations & Recognition</h2>
+  <div class="sec-bar"></div>
+
+  <div class="net-grid">
+    <div class="gc nc"><div class="net-period">04/2025 – Present</div><div class="net-role">Associate Member</div><div class="net-org">Bangladesh Institute of Planners · Dhaka</div><div class="net-bullets"><div class="net-b">Working as a professional planner in the development sector of Bangladesh</div></div></div>
+    <div class="gc nc"><div class="net-period">12/2023 – 05/2024</div><div class="net-role">Vice President</div><div class="net-org">RUET GIS Club · RUET, Rajshahi</div><div class="net-bullets"><div class="net-b">Organized GIS training for 70+ students</div><div class="net-b">Conducted GIS and Remote Sensing Competition</div></div></div>
+    <div class="gc nc"><div class="net-period">04/2022 – 04/2024</div><div class="net-role">Class Representative</div><div class="net-org">Department of URP · RUET, Rajshahi</div><div class="net-bullets"><div class="net-b">Elected by 56 students and 10 teachers for academic excellence</div><div class="net-b">Managed class & exam schedules; maintained teacher-student relations</div></div></div>
+    <div class="gc nc"><div class="net-period">01/2021 – 01/2024</div><div class="net-role">Founder</div><div class="net-org">YOUTH'16 Organization · Lohagara, Narail</div><div class="net-bullets"><div class="net-b">Free Medical Campaign for 250 people</div><div class="net-b">Career guidance for 100+ SSC/HSC students</div><div class="net-b">Raised ~BDT 50,000 for local orphanage</div></div></div>
+  </div>
+
+  <div class="sk-sub-title" style="margin-top:3rem;margin-bottom:1.2rem;">Honours & Awards</div>
+  <div class="awards-grid">
+    <div class="gc ac"><div class="aw-icon">🏅</div><div><div class="aw-year">2024</div><div class="aw-title">University Merit Scholarship</div><div class="aw-inst">Rajshahi University of Engineering & Technology</div></div></div>
+    <div class="gc ac"><div class="aw-icon">🌟</div><div><div class="aw-year">2023</div><div class="aw-title">Excellent Paper Award by Youth Mappers</div><div class="aw-inst">Jahangirnagar University</div></div></div>
+    <div class="gc ac"><div class="aw-icon">📜</div><div><div class="aw-year">2023</div><div class="aw-title">Excellence Certificate on Research — ICPACE</div><div class="aw-inst">Rajshahi University of Engineering & Technology</div></div></div>
+    <div class="gc ac"><div class="aw-icon">🥉</div><div><div class="aw-year">2019</div><div class="aw-title">3rd Position — Planning Idea Contest</div><div class="aw-inst">Bangladesh Institute of Planners</div></div></div>
+  </div>
+</div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+<div class="reveal">
+  <p class="sec-label">08 — Contact</p>
+  <h2 class="sec-title">Let's Connect</h2>
+  <div class="sec-bar"></div>
+  <div class="contact-wrap">
+    <div>
+      <p style="font-size:.94rem;line-height:1.8;color:var(--muted);margin-bottom:1.7rem;">Whether you have a research collaboration, project opportunity, or simply want to discuss urban planning and GIS — my inbox is always open.</p>
+      <div class="contact-channels">
+        <a href="mailto:rowdra2@gmail.com" class="gc cch">
+          <div class="ch-icon" style="background:rgba(234,67,53,.10);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="#ea4335"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+          </div>
+          <div><div class="ch-label">Gmail</div><div class="ch-value">rowdra2@gmail.com</div></div>
+        </a>
+        <a href="https://www.linkedin.com/in/rowdra-dip-chackroborty" target="_blank" class="gc cch">
+          <div class="ch-icon" style="background:rgba(10,102,194,.10);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="#0a66c2"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+          </div>
+          <div><div class="ch-label">LinkedIn</div><div class="ch-value">rowdra-dip-chackroborty</div></div>
+        </a>
+        <a href="https://scholar.google.com/citations?user=rowdra" target="_blank" class="gc cch">
+          <div class="ch-icon" style="background:rgba(66,133,244,.10);">
+            <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M12 24a7 7 0 1 1 0-14 7 7 0 0 1 0 14zm0-24L0 9.5l4.838 3.94A8 8 0 0 1 12 9a8 8 0 0 1 7.162 4.44L24 9.5z"/></svg>
+          </div>
+          <div><div class="ch-label">Google Scholar</div><div class="ch-value">View Publications</div></div>
+        </a>
+        <a href="https://www.researchgate.net/profile/Rowdra-Dip-Chackroborty" target="_blank" class="gc cch">
+          <div class="ch-icon" style="background:rgba(0,134,166,.10);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="#00848e"><path d="M19.586 0c-.818 0-1.508.19-2.073.565-.563.377-.97.936-1.213 1.68a12.54 12.54 0 0 0-.25 1.347 37.24 37.24 0 0 0-.067 1.516c0 1.214.293 2.183.877 2.906.586.724 1.416 1.086 2.494 1.086 1.178 0 2.027-.38 2.541-1.14.516-.762.773-1.723.773-2.88 0-1.19-.256-2.162-.77-2.92-.514-.755-1.36-1.133-2.544-1.133zm-7.677.09L0 4.585v14.83l11.91 4.495 11.91-4.495V4.585L11.91.09z"/></svg>
+          </div>
+          <div><div class="ch-label">ResearchGate</div><div class="ch-value">Research Profile</div></div>
+        </a>
+        <a href="tel:+8801921211739" class="gc cch">
+          <div class="ch-icon" style="background:rgba(37,211,102,.10);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="#25d366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.117.551 4.1 1.513 5.824L0 24l6.335-1.652A11.944 11.944 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.93 0-3.74-.524-5.29-1.438l-.38-.225-3.76.98.999-3.648-.248-.383A9.948 9.948 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+          </div>
+          <div><div class="ch-label">Phone / WhatsApp</div><div class="ch-value">+880 1921 211739</div></div>
+        </a>
+      </div>
+    </div>
+    <div class="cfwrap">
+      <form id="contactForm">
+        <div class="fg"><label>Your Name</label><input type="text" placeholder="Full name" required/></div>
+        <div class="fg"><label>Email Address</label><input type="email" placeholder="your@email.com" required/></div>
+        <div class="fg"><label>Subject</label><input type="text" placeholder="Research collaboration, opportunity…"/></div>
+        <div class="fg"><label>Message</label><textarea rows="4" placeholder="Tell me what's on your mind…" required></textarea></div>
+        <button type="submit" class="btn btn-primary" style="width:100%;text-align:center;">Send Message ↗</button>
+        <div class="form-success" id="formSuccess">✓ Message sent! I'll get back to you soon.</div>
+      </form>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>Designed & built by <strong>Rowdra Dip Chackroborty</strong> · Urban Planner & GIS Specialist · 2025</p>
+  <p style="margin-top:.32rem;font-size:.72rem;">Dhaka, Bangladesh · rowdra2@gmail.com · +880 1921211739</p>
+</footer>
+
+<script>
+const reveals=document.querySelectorAll('.reveal');
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
+},{threshold:0.07});
+reveals.forEach(el=>obs.observe(el));
+
+function switchTab(id,btn){
+  document.querySelectorAll('.proj-grid').forEach(g=>g.classList.remove('active'));
+  document.querySelectorAll('.proj-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+document.getElementById('contactForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  document.getElementById('formSuccess').style.display='block';
+  this.reset();
+  setTimeout(()=>{document.getElementById('formSuccess').style.display='none';},4000);
+});
+</script>
+</body>
+</html>
